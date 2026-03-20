@@ -305,7 +305,7 @@
                 card.className = 'order-card';
                 card.innerHTML = `
                     <div class="order-header">
-                        <span class="order-id">编号：${item["编号"] || '无'}</span>
+                        <span class="order-id">编号：${item["编号"] || item["订单编号"] || item["ID"] || Object.values(item)[0]}</span>
                         <span class="order-price">${item["报价"] || '面议'}</span>
                     </div>
                     <div class="tags">
