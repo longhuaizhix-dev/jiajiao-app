@@ -893,7 +893,7 @@ const orders = [
                 card.innerHTML = `
                     <div class="order-header">
                         <span class="order-id">编号：${orderId}</span>
-                        <span class="order-price">${item["价格"] || '面议'}</span>
+                        <span class="order-price">${item["价格"] || item["报价"] || '面议'}</span>
                     </div>
                     <div class="tags">
                         <span class="order-tag">${item["学生年级"]}</span>
