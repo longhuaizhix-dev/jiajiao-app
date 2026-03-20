@@ -5,69 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>家教订单接单大厅</title>
     <style>
-        body { font-family: -apple-system, system-ui, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
+        body { font-family: -apple-system, system-ui, sans-serif; background-color: #f2f5f4; margin: 0; padding: 0; }
         .header { background-color: #07c160; color: white; padding: 15px; text-align: center; font-size: 18px; font-weight: bold; position: sticky; top: 0; z-index: 100; }
-        .filter-container { display: flex; background: white; padding: 10px; border-bottom: 1px solid #eee; position: sticky; top: 51px; z-index: 99; }
-        .filter-box { flex: 1; margin: 0 5px; }
-        select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; background: #fff; appearance: none; }
-        .order-list { padding: 12px; padding-bottom: 30px; }
-        .order-card { background: white; border-radius: 12px; padding: 18px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); position: relative; border: 1px solid #eaeef2; }
-        .order-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; border-bottom: 1px dashed #eaeef2; padding-bottom: 12px; }
-        .order-id { font-size: 16px; font-weight: bold; color: #333; }
+        .filter-area { background: white; padding: 10px; border-bottom: 1px solid #eee; position: sticky; top: 51px; z-index: 99; }
+        .filter-row { display: flex; margin-bottom: 8px; }
+        .filter-box { flex: 1; margin: 0 4px; }
+        select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; background: #fff; outline: none; }
+        .order-list { padding: 12px; }
+        .order-card { background: white; border-radius: 12px; padding: 18px; margin-bottom: 15px; box-shadow: 0 3px 10px rgba(0,0,0,0.06); border: 1px solid #eef0f2; }
+        .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px dashed #eee; padding-bottom: 10px; }
+        .order-id { font-size: 15px; font-weight: bold; color: #2c3e50; }
         .order-price { color: #ff5722; font-size: 16px; font-weight: bold; }
         .tags { margin: 8px 0; }
-        .order-tag { display: inline-block; background: #eef7f2; color: #07c160; padding: 4px 10px; border-radius: 6px; font-size: 12px; margin-right: 6px; margin-bottom: 6px; font-weight: 500; }
-        .info-row { font-size: 14px; color: #666; margin: 6px 0; line-height: 1.6; display: flex; }
-        .info-label { color: #999; flex-shrink: 0; width: 85px; text-align: right; margin-right: 8px; }
-        .info-content { color: #333; }
-        .btn-grab { display: block; width: 100%; background: #07c160; color: white; border: none; padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 15px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
-        .btn-grab:active { background: #06ad56; }
-        .empty-state { text-align: center; padding: 50px 20px; color: #999; display: none; }
+        .order-tag { display: inline-block; background: #e8f7ed; color: #07c160; padding: 3px 10px; border-radius: 4px; font-size: 12px; margin-right: 5px; margin-bottom: 5px; font-weight: 500; }
+        .info-row { font-size: 14px; color: #555; margin: 5px 0; display: flex; line-height: 1.5; }
+        .info-label { color: #9a9a9a; flex-shrink: 0; width: 80px; text-align: right; margin-right: 8px; }
+        .info-content { color: #333; flex: 1; }
+        .btn-grab { display: block; width: 100%; background: #07c160; color: white; border: none; padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 15px; font-weight: bold; cursor: pointer; }
+        .empty-tips { text-align: center; color: #999; padding: 50px; font-size: 14px; }
     </style>
 </head>
 <body>
 
     <div class="header">家教订单接单大厅</div>
 
-    <div class="filter-container">
-        <div class="filter-box">
-            <select id="gradeFilter" onchange="filterOrders()">
-                <option value="全部">全部年级</option>
-                <option value="初一">初一</option>
-                <option value="初二">初二</option>
-                <option value="初三">初三</option>
-                <option value="高一">高一</option>
-                <option value="高二">高二</option>
-                <option value="小学">小学</option>
-            </select>
+    <div class="filter-area">
+        <div class="filter-row">
+            <div class="filter-box">
+                <select id="gradeFilter" onchange="filterOrders()">
+                    <option value="全部">全部年级</option>
+                    <option value="一年级">一年级</option>
+                    <option value="二年级">二年级</option>
+                    <option value="三年级">三年级</option>
+                    <option value="四年级">四年级</option>
+                    <option value="五年级">五年级</option>
+                    <option value="六年级">六年级</option>
+                    <option value="初一">初一</option>
+                    <option value="初二">初二</option>
+                    <option value="初三">初三</option>
+                    <option value="高一">高一</option>
+                    <option value="高二">高二</option>
+                    <option value="高三">高三</option>
+                </select>
+            </div>
+            <div class="filter-box">
+                <select id="subjectFilter" onchange="filterOrders()">
+                    <option value="全部">全部科目</option>
+                    <option value="语文">语文</option><option value="英语">英语</option><option value="数学">数学</option>
+                    <option value="物理">物理</option><option value="化学">化学</option><option value="生物">生物</option>
+                    <option value="政治">政治</option><option value="地理">地理</option><option value="历史">历史</option>
+                    <option value="高数">高数</option><option value="四六级">四六级</option><option value="雅思托福">雅思托福</option>
+                    <option value="其他">其他</option>
+                </select>
+            </div>
         </div>
-        <div class="filter-box">
-            <select id="subjectFilter" onchange="filterOrders()">
-                <option value="全部">全部科目</option>
-                <option value="数">数学</option>
-                <option value="英">英语</option>
-                <option value="理">物理</option>
-                <option value="化">化学</option>
-                <option value="全科">全科/陪读</option>
-            </select>
-        </div>
-        <div class="filter-box">
-            <select id="areaFilter" onchange="filterOrders()">
-                <option value="全部">全部区域</option>
-                <option value="浦东">浦东新区</option>
-                <option value="杨浦">杨浦区</option>
-                <option value="徐汇">徐汇区</option>
-                <option value="闵行">闵行区</option>
-            </select>
+        <div class="filter-row">
+            <div class="filter-box">
+                <select id="areaFilter" onchange="filterOrders()">
+                    <option value="全部">全部区域</option>
+                    <option value="浦东">浦东新区</option><option value="黄浦">黄浦区</option><option value="静安">静安区</option>
+                    <option value="徐汇">徐汇区</option><option value="长宁">长宁区</option><option value="普陀">普陀区</option>
+                    <option value="虹口">虹口区</option><option value="杨浦">杨浦区</option><option value="宝山">宝山区</option>
+                    <option value="闵行">闵行区</option><option value="嘉定">嘉定区</option><option value="金山">金山区</option>
+                    <option value="松江">松江区</option><option value="青浦">青浦区</option><option value="奉贤">奉贤区</option>
+                    <option value="崇明">崇明区</option>
+                </select>
+            </div>
         </div>
     </div>
 
     <div class="order-list" id="orderList"></div>
-    <div class="empty-state" id="emptyState">没有找到符合条件的订单哦~</div>
+    <div class="empty-tips" id="emptyTips">没有找到符合条件的订单~</div>
 
     <script>
-        // 【重要】请继续使用你转换出的真实 CSV 数据块覆盖下方
-       const orders = [
+        // 这里粘贴你转换后的数据
+        const orders = [
     {
         "﻿编号": "6031435",
         "学生性别": "男",
@@ -301,89 +313,74 @@
     }
 ];;
 
-        // 渲染订单卡片的函数
+        // 核心：年级数字与文字转换逻辑
+        const gradeMap = {
+            "一年级": ["一", "1"], "二年级": ["二", "2"], "三年级": ["三", "3"],
+            "四年级": ["四", "4"], "五年级": ["五", "5"], "六年级": ["六", "6"]
+        };
+
         function renderOrders(data) {
             const list = document.getElementById('orderList');
-            const empty = document.getElementById('emptyState');
+            const tips = document.getElementById('emptyTips');
             list.innerHTML = '';
             
-            if(data.length === 0) {
-                empty.style.display = 'block';
-                return;
-            }
-            empty.style.display = 'none';
+            if (data.length === 0) { tips.style.display = 'block'; return; }
+            tips.style.display = 'none';
 
             data.forEach(item => {
-                // 使用“万能取值法”获取编号
                 const orderId = item["编号"] || item["订单编号"] || item["ID"] || Object.values(item)[0];
                 const card = document.createElement('div');
                 card.className = 'order-card';
                 card.innerHTML = `
                     <div class="order-header">
-                        <span class="order-id">编号：${orderId || '无'}</span>
+                        <span class="order-id">编号：${orderId}</span>
                         <span class="order-price">${item["报价"] || '面议'}</span>
                     </div>
                     <div class="tags">
-                        <span class="order-tag">${item["学生年级"] || '年级未知'}</span>
-                        <span class="order-tag">${item["学生性别"] || '性别未知'}</span>
-                        <span class="order-tag">${item["补习科目"] || '科目未知'}</span>
+                        <span class="order-tag">${item["学生年级"]}</span>
+                        <span class="order-tag">${item["学生性别"]}</span>
+                        <span class="order-tag">${item["补习科目"]}</span>
                     </div>
-                    <div class="info-row"><span class="info-label">📍 地点：</span><span class="info-content">${item["地址"] || '请咨询'}</span></div>
-                    <div class="info-row"><span class="info-label">⏰ 时间：</span><span class="info-content">${item["补习时间"] || '待定'}</span></div>
-                    <div class="info-row"><span class="info-label">📝 要求：</span><span class="info-content">${item["对老师要求"] || '无特殊要求'}</span></div>
-                    <button class="btn-grab" onclick="copyOrderAndAlert('${orderId}')">点击抢单</button>
+                    <div class="info-row"><span class="info-label">📍 地点：</span><span class="info-content">${item["地址"]}</span></div>
+                    <div class="info-row"><span class="info-label">⏰ 时间：</span><span class="info-content">${item["补习时间"]}</span></div>
+                    <div class="info-row"><span class="info-label">📝 要求：</span><span class="info-content">${item["对老师要求"]}</span></div>
+                    <button class="btn-grab" onclick="copyAndAlert('${orderId}')">点击抢单</button>
                 `;
                 list.appendChild(card);
             });
         }
 
-        // 筛选逻辑
         function filterOrders() {
             const g = document.getElementById('gradeFilter').value;
             const s = document.getElementById('subjectFilter').value;
             const a = document.getElementById('areaFilter').value;
 
             const filtered = orders.filter(item => {
-                const mg = (g === '全部') || (item["学生年级"] && item["学生年级"].includes(g));
-                // 模糊匹配科目和地址
-                const ms = (s === '全部') || (item["补习科目"] && (item["补习科目"].includes(s) || (s === '全科' && (item["补习科目"].includes('全科') || item["补习科目"].includes('陪读')))));
+                // 年级模糊匹配（兼容 1 和 一）
+                let mg = (g === '全部');
+                if (!mg) {
+                    const keywords = gradeMap[g] || [g];
+                    mg = keywords.some(k => item["学生年级"] && item["学生年级"].toString().includes(k));
+                }
+                const ms = (s === '全部') || (item["补习科目"] && item["补习科目"].includes(s));
                 const ma = (a === '全部') || (item["地址"] && item["地址"].includes(a));
                 return mg && ms && ma;
             });
-
             renderOrders(filtered);
         }
 
-        // 新增核心函数：处理点击事件（复制内容 + 修改提示）
-        function copyOrderAndAlert(orderId) {
-            // 根据 ID 找到完整的订单对象
-            const order = orders.find(item => {
-                const itemId = item["编号"] || item["订单编号"] || item["ID"] || Object.values(item)[0];
-                return itemId === orderId;
-            });
-
-            if (!order) {
-                alert("未找到该订单。");
-                return;
+        async function copyAndAlert(id) {
+            const item = orders.find(o => (o["编号"]||o["订单编号"]||o["ID"]||Object.values(o)[0]) == id);
+            const text = `里昂，我想接单！\n订单信息如下：\n编号：${id}\n年级：${item["学生年级"]}\n科目：${item["补习科目"]}\n地址：${item["地址"]}\n报价：${item["报价"]}`;
+            
+            try {
+                await navigator.clipboard.writeText(text);
+                alert("请私聊里昂，发送订单信息申请接单~订单已复制");
+            } catch (err) {
+                alert("复制失败，请截图发送给里昂！");
             }
-
-            // 构建一个干净、可粘贴的订单摘要字符串
-            const orderContent = `订单编号: ${orderId}\n年级: ${order["学生年级"] || '年级未知'}\n科目: ${order["补习科目"] || '科目未知'}\n时间: ${order["补习时间"] || '待定'}\n地址: ${order["地址"] || '请咨询'}\n要求: ${order["对老师要求"] || '无特殊要求'}\n报价: ${order["报价"] || '面议'}`;
-
-            // 调用剪贴板 API
-            navigator.clipboard.writeText(orderContent)
-                .then(() => {
-                    // 复制成功，弹出你要求的提示框
-                    alert("请私聊里昂，发送订单信息申请接单~订单已复制");
-                })
-                .catch(err => {
-                    // 处理复制失败的情况（极少发生）
-                    alert("复制失败，请重试或手动复制。");
-                    console.error('无法复制内容：', err);
-                });
         }
 
-        // 页面加载完成时渲染
         window.onload = filterOrders;
     </script>
 </body>
