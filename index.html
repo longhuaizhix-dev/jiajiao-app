@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>家教订单接单大厅</title>
+    <title>上海家教查询大厅</title>
     <style>
         body { font-family: -apple-system, system-ui, sans-serif; background-color: #f2f5f4; margin: 0; padding: 0; }
         .header { background-color: #07c160; color: white; padding: 15px; text-align: center; font-size: 18px; font-weight: bold; position: sticky; top: 0; z-index: 100; }
@@ -27,7 +27,7 @@
 </head>
 <body>
 
-    <div class="header">家教订单接单大厅</div>
+    <div class="header">订单速查</div>
 
     <div class="filter-area">
         <div class="filter-row">
@@ -375,7 +375,7 @@
             
             try {
                 await navigator.clipboard.writeText(text);
-                alert("请私聊里昂，发送订单信息申请接单~订单已复制");
+                alert("已复制，发给 里昂 即可接单");
             } catch (err) {
                 alert("复制失败，请截图发送给里昂！");
             }
