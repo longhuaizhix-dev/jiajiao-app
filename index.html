@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>家教订单接单大厅</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f4f5f7; margin: 0; padding: 0; }
+        .header { background-color: #07c160; color: white; padding: 15px; text-align: center; font-size: 18px; font-weight: bold; position: sticky; top: 0; z-index: 100; }
+        .filter-container { display: flex; background: white; padding: 10px; border-bottom: 1px solid #eee; position: sticky; top: 50px; z-index: 99; }
+        .filter-box { flex: 1; margin: 0 5px; }
+        select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; background-color: #fff; outline: none; }
+        .order-list { padding: 10px; padding-bottom: 80px; }
+        .order-card { background: white; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .order-header { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px dashed #eee; padding-bottom: 10px; }
+        .order-id { font-weight: bold; color: #333; }
+        .order-price { color: #ff5722; font-weight: bold; }
+        .order-tag { display: inline-block; background: #e8f4fd; color: #1890ff; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-right: 5px; margin-bottom: 5px; }
+        .order-desc { font-size: 14px; color: #666; margin-top: 10px; line-height: 1.5; }
+        .empty-state { text-align: center; padding: 50px 20px; color: #999; display: none; }
+        .btn-copy { display: block; width: 100%; background: #07c160; color: white; border: none; padding: 10px; border-radius: 4px; margin-top: 12px; font-size: 14px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="header">家教订单接单大厅</div>
+
+    <div class="filter-container">
+        <div class="filter-box">
+            <select id="gradeFilter" onchange="filterOrders()">
+                <option value="全部">全部年级</option>
+                <option value="小学">小学 (1-6年级)</option>
+                <option value="初中">初中 (初一至初三)</option>
+                <option value="高中">高中 (高一至高三)</option>
+            </select>
+        </div>
+        <div class="filter-box">
+            <select id="subjectFilter" onchange="filterOrders()">
+                <option value="全部">全部科目</option>
+                <option value="语文">语文</option>
+                <option value="数学">数学</option>
+                <option value="英语">英语</option>
+                <option value="物理">物理</option>
+                <option value="化学">化学</option>
+                <option value="全科">全科/陪读</option>
+            </select>
+        </div>
+        <div class="filter-box">
+            <select id="areaFilter" onchange="filterOrders()">
+                <option value="全部">全部区域</option>
+                <option value="杨浦区">杨浦区</option>
+                <option value="徐汇区">徐汇区</option>
+                <option value="浦东新区">浦东新区</option>
+                <option value="静安区">静安区</option>
+                <option value="上理工附小">上理工附小附近</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="order-list" id="orderList">
+        </div>
+    <div class="empty-state" id="emptyState">没有找到符合条件的订单哦~</div>
+
+    <script>
+        // 这是你的“后端数据库”，你可以随时在这里添加、修改订单
+        const orders = [
+            { id: "T-001", grade: "高中", gradeDetail: "高二", subject: "数学", area: "松江区", address: "余山镇国贸天悦二期", price: "150/h", time: "周六下午", desc: "男生，基础一般，需要梳理知识点。" },
+            { id: "T-002", grade: "小学", gradeDetail: "四年级", subject: "数学", area: "浦东新区", address: "唐镇玉盘北路", price: "120/h", time: "工作日晚", desc: "小奥（高斯导引），要求有相关带教经验。" },
+            { id: "T-003", grade: "初中", gradeDetail: "初二", subject: "物理", area: "上理工附小", address: "上理工附小周边小区", price: "130/h", time: "周末可协商", desc: "女生，刚接触物理，需要激发兴趣，性格开朗的女老师优先。" },
+            { id: "T-004", grade: "小学", gradeDetail: "六年级", subject: "语文, 英语", area: "闵行区", address: "爱庐世纪新苑", price: "120/h", time: "周日全天", desc: "英语语文辅导（一位老师），以英语为主。" }
+        ];
+
+        // 渲染订单卡片的函数
+        function renderOrders(data) {
+            const list = document.getElementById('orderList');
+            const empty = document.getElementById('emptyState');
+            list.innerHTML = '';
+            
+            if(data.length === 0) {
+                empty.style.display = 'block';
+                return;
+            }
+            empty.style.display = 'none';
+
+            data.forEach(order => {
+                const card = document.createElement('div');
+                card.className = 'order-card';
+                card.innerHTML = `
+                    <div class="order-header">
+                        <span class="order-id">编号：${order.id}</span>
+                        <span class="order-price">${order.price}</span>
+                    </div>
+                    <div>
+                        <span class="order-tag">${order.gradeDetail}</span>
+                        <span class="order-tag">${order.subject}</span>
+                        <span class="order-tag">${order.area}</span>
+                    </div>
+                    <div class="order-desc">
+                        📍 <strong>位置：</strong>${order.address}<br>
+                        ⏰ <strong>时间：</strong>${order.time}<br>
+                        📝 <strong>要求：</strong>${order.desc}
+                    </div>
+                    <button class="btn-copy" onclick="alert('请在微信中复制编号：${order.id} 发送给我接单！')">点击抢单</button>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        // 筛选逻辑，完美支持“模糊包含”
+        function filterOrders() {
+            const gFilter = document.getElementById('gradeFilter').value;
+            const sFilter = document.getElementById('subjectFilter').value;
+            const aFilter = document.getElementById('areaFilter').value;
+
+            const filtered = orders.filter(order => {
+                const matchGrade = (gFilter === '全部') || order.grade.includes(gFilter);
+                // 只要订单的科目里包含筛选的字眼就算匹配
+                const matchSubject = (sFilter === '全部') || order.subject.includes(sFilter);
+                const matchArea = (aFilter === '全部') || order.area.includes(aFilter);
+                return matchGrade && matchSubject && matchArea;
+            });
+
+            renderOrders(filtered);
+        }
+
+        // 页面加载时默认渲染所有订单
+        window.onload = () => filterOrders();
+    </script>
+</body>
+</html>
