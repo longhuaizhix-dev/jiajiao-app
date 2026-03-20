@@ -5,20 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>家教订单接单大厅</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f4f5f7; margin: 0; padding: 0; }
+        body { font-family: -apple-system, system-ui, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
         .header { background-color: #07c160; color: white; padding: 15px; text-align: center; font-size: 18px; font-weight: bold; position: sticky; top: 0; z-index: 100; }
-        .filter-container { display: flex; background: white; padding: 10px; border-bottom: 1px solid #eee; position: sticky; top: 50px; z-index: 99; }
+        .filter-container { display: flex; background: white; padding: 10px; border-bottom: 1px solid #eee; position: sticky; top: 51px; z-index: 99; }
         .filter-box { flex: 1; margin: 0 5px; }
-        select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; background-color: #fff; outline: none; }
-        .order-list { padding: 10px; padding-bottom: 80px; }
-        .order-card { background: white; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .order-header { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px dashed #eee; padding-bottom: 10px; }
-        .order-id { font-weight: bold; color: #333; }
-        .order-price { color: #ff5722; font-weight: bold; }
-        .order-tag { display: inline-block; background: #e8f4fd; color: #1890ff; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-right: 5px; margin-bottom: 5px; }
-        .order-desc { font-size: 14px; color: #666; margin-top: 10px; line-height: 1.5; }
-        .empty-state { text-align: center; padding: 50px 20px; color: #999; display: none; }
-        .btn-copy { display: block; width: 100%; background: #07c160; color: white; border: none; padding: 10px; border-radius: 4px; margin-top: 12px; font-size: 14px; cursor: pointer; }
+        select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; background: #fff; appearance: none; }
+        .order-list { padding: 12px; }
+        .order-card { background: white; border-radius: 12px; padding: 18px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); position: relative; }
+        .order-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .order-id { font-size: 16px; font-weight: bold; color: #333; }
+        .order-price { color: #ff5722; font-size: 16px; font-weight: bold; }
+        .tags { margin: 8px 0; }
+        .order-tag { display: inline-block; background: #eef7f2; color: #07c160; padding: 4px 10px; border-radius: 6px; font-size: 12px; margin-right: 6px; margin-bottom: 6px; font-weight: 500; }
+        .info-row { font-size: 14px; color: #666; margin: 6px 0; line-height: 1.6; display: flex; }
+        .info-label { color: #999; flex-shrink: 0; width: 85px; }
+        .btn-grab { display: block; width: 100%; background: #07c160; color: white; border: none; padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 15px; font-weight: bold; cursor: pointer; }
+        .btn-grab:active { background: #06ad56; }
     </style>
 </head>
 <body>
@@ -29,329 +31,91 @@
         <div class="filter-box">
             <select id="gradeFilter" onchange="filterOrders()">
                 <option value="全部">全部年级</option>
-                <option value="小学">小学 (1-6年级)</option>
-                <option value="初中">初中 (初一至初三)</option>
-                <option value="高中">高中 (高一至高三)</option>
+                <option value="初二">初二</option>
+                <option value="初三">初三</option>
+                <option value="高一">高一</option>
+                <option value="高二">高二</option>
+                <option value="小学">小学</option>
             </select>
         </div>
         <div class="filter-box">
             <select id="subjectFilter" onchange="filterOrders()">
                 <option value="全部">全部科目</option>
-                <option value="语文">语文</option>
-                <option value="数学">数学</option>
-                <option value="英语">英语</option>
-                <option value="物理">物理</option>
-                <option value="化学">化学</option>
-                <option value="全科">全科/陪读</option>
+                <option value="数">数学</option>
+                <option value="英">英语</option>
+                <option value="理">物理</option>
+                <option value="化">化学</option>
             </select>
         </div>
         <div class="filter-box">
             <select id="areaFilter" onchange="filterOrders()">
                 <option value="全部">全部区域</option>
-                <option value="杨浦区">杨浦区</option>
-                <option value="徐汇区">徐汇区</option>
-                <option value="浦东新区">浦东新区</option>
-                <option value="静安区">静安区</option>
-                <option value="上理工附小">上理工附小附近</option>
+                <option value="浦东">浦东新区</option>
+                <option value="杨浦">杨浦区</option>
+                <option value="徐汇">徐汇区</option>
+                <option value="闵行">闵行区</option>
             </select>
         </div>
     </div>
 
-    <div class="order-list" id="orderList">
-        </div>
-    <div class="empty-state" id="emptyState">没有找到符合条件的订单哦~</div>
+    <div class="order-list" id="orderList"></div>
 
     <script>
-        // 这是你的“后端数据库”，你可以随时在这里添加、修改订单
-       const orders = [
-    {
-        "﻿编号": "6031435",
-        "学生性别": "男",
-        "学生年级": "初二",
-        "补习科目": "数和英（一位）",
-        "现阶段成绩": "一般",
-        "补习时间": "每周一次，每次两小时，周六日",
-        "报价": "160一小时",
-        "地址": "浦东新区环林西路618弄",
-        "对老师要求": "男女老师均可，有经验，耐心 长期稳定的 顺便带化学。大三及以上资历好的"
-    },
-    {
-        "﻿编号": "6031438",
-        "学生性别": "女",
-        "学生年级": "高二",
-        "补习科目": "数学",
-        "现阶段成绩": "",
-        "补习时间": "每周一次，每次2小时，周末",
-        "报价": "190一小时",
-        "地址": "宝山区 塘祁路517弄",
-        "对老师要求": "经验丰富，985，211   女老师，高中在上海就读的"
-    },
-    {
-        "﻿编号": "6031441",
-        "学生性别": "男",
-        "学生年级": "三年级",
-        "补习科目": "数学",
-        "现阶段成绩": "",
-        "补习时间": "每周1次，每次2个小时，大概时间段每周三晚上固定六点半，最好26号晚上6点半试课",
-        "报价": "130一小时",
-        "地址": "浦东新区高木桥路219弄长城中环墅",
-        "对老师要求": "男女老师均可，经验丰富，985211"
-    },
-    {
-        "﻿编号": "6031444",
-        "学生性别": "女孩",
-        "学生年级": "初二",
-        "补习科目": "英语",
-        "现阶段成绩": "",
-        "补习时间": "每周1次，每次1.5-2小时，周六上午",
-        "报价": "150一小时",
-        "地址": "静安区中山北路805弄地铁一号线中山北路站一号口",
-        "对老师要求": "男女老师均可，有经验，英语成绩好，耐心负责 ，根据孩子的薄弱点针对补习   英语专业的"
-    },
-    {
-        "﻿编号": "6031511",
-        "学生性别": "女孩和男孩",
-        "学生年级": "六年级（一对二）",
-        "补习科目": "数学",
-        "现阶段成绩": "成绩很好，快速把初中数学学完",
-        "补习时间": "每周1次，每次2小时，周六日",
-        "报价": "240一小时",
-        "地址": "松江区万达附近，距离1km",
-        "对老师要求": "男/女老师，经验丰富，理科能力强，有教学方法， 交大的"
-    },
-    {
-        "﻿编号": "6031516",
-        "学生性别": "女",
-        "学生年级": "六年级",
-        "补习科目": "语数外辅导作业（一位老师）",
-        "现阶段成绩": "中等",
-        "补习时间": "每周4-5次，周一到周五每天晚上7-9点，每次2小时",
-        "报价": "130一小时",
-        "地址": "浦东新区黄杨路18弄",
-        "对老师要求": "女老师，有经验/性格温和 985,211 有相关经验"
-    },
-    {
-        "﻿编号": "6031519",
-        "学生性别": "女",
-        "学生年级": "初二",
-        "补习科目": "物理化学（一位）",
-        "现阶段成绩": "",
-        "补习时间": "每周1次课，每次2小时，周六日",
-        "报价": "160一小时",
-        "地址": "浦东新区华谐路198号",
-        "对老师要求": "男 女老师，经验丰富，有学习方法，带过初中英语985/211 研究生"
-    },
-    {
-        "﻿编号": "6031521",
-        "学生性别": "男生",
-        "学生年级": "5年级",
-        "补习科目": "数学",
-        "现阶段成绩": "",
-        "补习时间": "每周一次，每次2小时，周六上午",
-        "报价": "一小时140元",
-        "地址": "浦东新区 白金瀚宫",
-        "对老师要求": "男/女老师，华师大的擅长教数学 有教学方法"
-    },
-    {
-        "﻿编号": "6031526",
-        "学生性别": "女生",
-        "学生年级": "六年级",
-        "补习科目": "英语（口语、雅思）",
-        "现阶段成绩": "90左右",
-        "补习时间": "每周1次，每次2小时，周末",
-        "报价": "一小时140",
-        "地址": "徐汇区宾南路19弄，公园道壹号臻庭",
-        "对老师要求": "女老师，经验丰富，有耐心，发音标准，985   雅思成绩高   会教"
-    },
-    {
-        "﻿编号": "6031527",
-        "学生性别": "男",
-        "学生年级": "初三",
-        "补习科目": "语文和英语（一位）",
-        "现阶段成绩": "一般，语文的阅读理解和英语的语法和阅读",
-        "补习时间": "每周2次，每次2个小时，双休日",
-        "报价": "180一小时",
-        "地址": " 青浦区 华新镇三友星墅",
-        "对老师要求": "男老师，经验丰富，理科灵活教学，不要太死板  有教学方法"
-    },
-    {
-        "﻿编号": "6031529",
-        "学生性别": "女孩",
-        "学生年级": "初三",
-        "补习科目": "数学",
-        "现阶段成绩": "",
-        "补习时间": "每周1次，每次2小时，周日上午戓下午1点到3点",
-        "报价": "180一小时",
-        "地址": "浦东舜峰家苑",
-        "对老师要求": "男女老师均可，经验丰富，数学要求理科生，"
-    },
-    {
-        "﻿编号": "6031530",
-        "学生性别": "男",
-        "学生年级": "二年级",
-        "补习科目": "全科辅导作业（一位）理科为主",
-        "现阶段成绩": "",
-        "补习时间": "每周4-5次，每次2小时，周一到周四，周末",
-        "报价": "120一小时",
-        "地址": "宝山区宝钰澜庭",
-        "对老师要求": "男/女老师均可，经验丰富，985 有小奥经验，思维好，严格一点，孩子容易走神 有教学方法"
-    },
-    {
-        "﻿编号": "6031531",
-        "学生性别": "男",
-        "学生年级": "大班5岁半",
-        "补习科目": "英语口语",
-        "现阶段成绩": "",
-        "补习时间": "每周2次，每次2小时，周六日",
-        "报价": "120一小时",
-        "地址": "",
-        "对老师要求": "男/女老师，经验丰富 ，英语专业，985优先"
-    },
-    {
-        "﻿编号": "6031532",
-        "学生性别": "男",
-        "学生年级": "六年级",
-        "补习科目": "英语 语文（一位，英语为主）",
-        "现阶段成绩": "",
-        "补习时间": "每周1次，每次2.5个小时，周一18",
-        "报价": "300/次",
-        "地址": "闵行区 爱庐世纪新苑",
-        "对老师要求": ""
-    },
-    {
-        "﻿编号": "6031610",
-        "学生性别": "女",
-        "学生年级": "高2",
-        "补习科目": "数学",
-        "现阶段成绩": "",
-        "补习时间": "每周1次，每次3小时，周五晚",
-        "报价": "200一小时",
-        "地址": "松江佘山镇国贸天悦二期",
-        "对老师要求": "女老师优先，经验丰富/性格活泼开朗，善于言谈  985/211"
-    },
-    {
-        "﻿编号": "6031611",
-        "学生性别": "两个女孩子",
-        "学生年级": "6年级",
-        "补习科目": "英语和语文（一位）",
-        "现阶段成绩": "",
-        "补习时间": "",
-        "报价": "130一小时",
-        "地址": "浦东区周秀路516弄",
-        "对老师要求": "女老师，经验丰富，985,211 有相关经验 有教学方法 文科相关专业"
-    },
-    {
-        "﻿编号": "6031613",
-        "学生性别": "两个女生",
-        "学生年级": "一年级和幼儿园中班（双语学校）",
-        "补习科目": "语数外辅导作业 阅读为主（一位）（分别一对一）",
-        "现阶段成绩": "",
-        "补习时间": "每周4次，每个孩子各1小时，共2小时，周一到周四",
-        "报价": "120一小时",
-        "地址": "静安区万航渡路388弄静安花园",
-        "对老师要求": "女老师，经验丰富，有耐心，有亲和力，负责任，985  性格开朗  学前教育专业，可以英文沟通"
-    },
-    {
-        "﻿编号": "6031614",
-        "学生性别": "男",
-        "学生年级": "大班",
-        "补习科目": "英语",
-        "现阶段成绩": "",
-        "补习时间": "每周2-3次，每次1,5小时，周中协商",
-        "报价": "（110一小时）",
-        "地址": "青浦朱家角镇孟将堂路111",
-        "对老师要求": "男/女老师，经验丰富，有耐心，负责任，周中"
-    },
-    {
-        "﻿编号": "6031616",
-        "学生性别": "女",
-        "学生年级": "四年级",
-        "补习科目": "小奥（高斯导引）",
-        "现阶段成绩": "",
-        "补习时间": "每周2次，每次两小时，周六日",
-        "报价": "150元一小时",
-        "地址": "浦东-唐镇玉盘北路288弄46号",
-        "对老师要求": "女老师，有竞赛经验，有耐心，过5导和6导"
-    },
-    {
-        "﻿编号": "6031618",
-        "学生性别": "男孩/女孩",
-        "学生年级": "一年级/大班",
-        "补习科目": "辅导作业，语文和英语为主（一位）",
-        "现阶段成绩": "",
-        "补习时间": "每周2-3次次，每次2小时，晚上6",
-        "报价": "130一小时（每个孩子一小时）",
-        "地址": "浦东新区-世茂滨江花园",
-        "对老师要求": "女老师，有经验，耐心负责，会钢琴 985"
-    },
-    {
-        "﻿编号": "6031619",
-        "学生性别": "男",
-        "学生年级": "高三",
-        "补习科目": "物理化学等级考（一位老师）",
-        "现阶段成绩": "中等",
-        "补习时间": "每周1次，每次2-3个小时，周六",
-        "报价": "240一小时",
-        "地址": "嘉定区 星华公路1782弄",
-        "对老师要求": "男老师，经验丰富，了解上海考点和教材 擅长提分，复旦交大 擅长提分  需要带过上海高三的学生"
-    }
-];;
+        // 【重要】请将 Python 转换出的代码复制到下方方括号内
+        const orders = [
+            {
+                "编号": "6031435",
+                "学生性别": "男",
+                "学生年级": "初二",
+                "补习科目": "数和英（一位）",
+                "补习时间": "每周一次，每次两小时，周六日",
+                "报价": "160一小时",
+                "地址": "浦东新区环林西路618弄",
+                "对老师要求": "男女老师均可，有经验，耐心，长期稳定的。顺便带化学。资历好的优先"
+            }
+        ];
 
-        // 渲染订单卡片的函数
         function renderOrders(data) {
             const list = document.getElementById('orderList');
-            const empty = document.getElementById('emptyState');
             list.innerHTML = '';
             
-            if(data.length === 0) {
-                empty.style.display = 'block';
-                return;
-            }
-            empty.style.display = 'none';
-
-            data.forEach(order => {
+            data.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'order-card';
                 card.innerHTML = `
                     <div class="order-header">
-                        <span class="order-id">编号：${order.id}</span>
-                        <span class="order-price">${order.price}</span>
+                        <span class="order-id">编号：${item["编号"] || '无'}</span>
+                        <span class="order-price">${item["报价"] || '面议'}</span>
                     </div>
-                    <div>
-                        <span class="order-tag">${order.gradeDetail}</span>
-                        <span class="order-tag">${order.subject}</span>
-                        <span class="order-tag">${order.area}</span>
+                    <div class="tags">
+                        <span class="order-tag">${item["学生年级"] || '年级未知'}</span>
+                        <span class="order-tag">${item["学生性别"] || '性别未知'}</span>
+                        <span class="order-tag">${item["补习科目"] || '科目未知'}</span>
                     </div>
-                    <div class="order-desc">
-                        📍 <strong>位置：</strong>${order.address}<br>
-                        ⏰ <strong>时间：</strong>${order.time}<br>
-                        📝 <strong>要求：</strong>${order.desc}
-                    </div>
-                    <button class="btn-copy" onclick="alert('请在微信中复制编号：${order.id} 发送给我接单！')">点击抢单</button>
+                    <div class="info-row"><span class="info-label">📍 地点：</span><span>${item["地址"] || '请咨询'}</span></div>
+                    <div class="info-row"><span class="info-label">⏰ 时间：</span><span>${item["补习时间"] || '待定'}</span></div>
+                    <div class="info-row"><span class="info-label">📝 要求：</span><span>${item["对老师要求"] || '无特殊要求'}</span></div>
+                    <button class="btn-grab" onclick="alert('请私聊发送编号【${item["编号"]}】申请接单')">点击抢单</button>
                 `;
                 list.appendChild(card);
             });
         }
 
-        // 筛选逻辑，完美支持“模糊包含”
         function filterOrders() {
-            const gFilter = document.getElementById('gradeFilter').value;
-            const sFilter = document.getElementById('subjectFilter').value;
-            const aFilter = document.getElementById('areaFilter').value;
+            const g = document.getElementById('gradeFilter').value;
+            const s = document.getElementById('subjectFilter').value;
+            const a = document.getElementById('areaFilter').value;
 
-            const filtered = orders.filter(order => {
-                const matchGrade = (gFilter === '全部') || order.grade.includes(gFilter);
-                // 只要订单的科目里包含筛选的字眼就算匹配
-                const matchSubject = (sFilter === '全部') || order.subject.includes(sFilter);
-                const matchArea = (aFilter === '全部') || order.area.includes(aFilter);
-                return matchGrade && matchSubject && matchArea;
+            const filtered = orders.filter(item => {
+                const mg = (g === '全部') || (item["学生年级"] && item["学生年级"].includes(g));
+                const ms = (s === '全部') || (item["补习科目"] && item["补习科目"].includes(s));
+                const ma = (a === '全部') || (item["地址"] && item["地址"].includes(a));
+                return mg && ms && ma;
             });
-
             renderOrders(filtered);
         }
 
-        // 页面加载时默认渲染所有订单
-        window.onload = () => filterOrders();
+        window.onload = filterOrders;
     </script>
 </body>
 </html>
