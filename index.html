@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>上海家教查询大厅</title>
+    <title>订单速查 - 上海家教大厅</title>
     <style>
         body { font-family: -apple-system, system-ui, sans-serif; background-color: #f2f5f4; margin: 0; padding: 0; }
         .header { background-color: #07c160; color: white; padding: 15px; text-align: center; font-size: 18px; font-weight: bold; position: sticky; top: 0; z-index: 100; }
@@ -22,6 +22,7 @@
         .info-label { color: #9a9a9a; flex-shrink: 0; width: 80px; text-align: right; margin-right: 8px; }
         .info-content { color: #333; flex: 1; }
         .btn-grab { display: block; width: 100%; background: #07c160; color: white; border: none; padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 15px; font-weight: bold; cursor: pointer; }
+        .btn-grab:active { background: #06ad56; }
         .empty-tips { text-align: center; color: #999; padding: 50px; font-size: 14px; }
     </style>
 </head>
@@ -78,10 +79,8 @@
     <div class="empty-tips" id="emptyTips">没有找到符合条件的订单~</div>
 
     <script>
-        // 这里粘贴你转换后的数据
+        // 【里昂注意】直接把转换后的原始数据贴在这里即可，乱码会自动被下方的逻辑洗掉
        
-
-
 
 const orders = [
     {
@@ -869,13 +868,22 @@ const orders = [
 
 ;
 
+        // --- 数据清洗逻辑：自动去除键名中的不可见乱码和空格 ---
+        const orders = rawOrders.map(item => {
+            const newItem = {};
+            for (let key in item) {
+                // 移除所有非中文字符、字母、数字以外的干扰项（包括BOM头和特殊符号）
+                const cleanKey = key.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '').trim();
+                newItem[cleanKey] = item[key];
+            }
+            return newItem;
+        });
 
-;;
-
-        // 核心：年级数字与文字转换逻辑
+        // 年级智能映射（支持数字和汉字匹配）
         const gradeMap = {
             "一年级": ["一", "1"], "二年级": ["二", "2"], "三年级": ["三", "3"],
-            "四年级": ["四", "4"], "五年级": ["五", "5"], "六年级": ["六", "6"]
+            "四年级": ["四", "4"], "五年级": ["五", "5"], "六年级": ["六", "6"],
+            "初一": ["初一", "7"], "初二": ["初二", "8"], "初三": ["初三", "9"]
         };
 
         function renderOrders(data) {
@@ -887,22 +895,25 @@ const orders = [
             tips.style.display = 'none';
 
             data.forEach(item => {
-                const orderId = item["编号"] || item["订单编号"] || item["ID"] || Object.values(item)[0];
+                // 兼容多种可能的编号键名
+                const orderId = item["订单号"] || item["编号"] || item["ID"] || Object.values(item)[0];
+                const price = item["价格"] || item["报价"] || '面议';
+
                 const card = document.createElement('div');
                 card.className = 'order-card';
                 card.innerHTML = `
                     <div class="order-header">
                         <span class="order-id">编号：${orderId}</span>
-                        <span class="order-price">${item["价格"] || item["报价"] || '面议'}</span>
+                        <span class="order-price">${price}</span>
                     </div>
                     <div class="tags">
-                        <span class="order-tag">${item["学生年级"]}</span>
-                        <span class="order-tag">${item["学生性别"]}</span>
-                        <span class="order-tag">${item["补习科目"]}</span>
+                        <span class="order-tag">${item["学生年级"] || '年级未填'}</span>
+                        <span class="order-tag">${item["学生性别"] || '性别未填'}</span>
+                        <span class="order-tag">${item["补习科目"] || '科目未填'}</span>
                     </div>
-                    <div class="info-row"><span class="info-label">📍 地点：</span><span class="info-content">${item["地址"]}</span></div>
-                    <div class="info-row"><span class="info-label">⏰ 时间：</span><span class="info-content">${item["补习时间"]}</span></div>
-                    <div class="info-row"><span class="info-label">📝 要求：</span><span class="info-content">${item["对老师要求"]}</span></div>
+                    <div class="info-row"><span class="info-label">📍 地点：</span><span class="info-content">${item["地址"] || '见详细要求'}</span></div>
+                    <div class="info-row"><span class="info-label">⏰ 时间：</span><span class="info-content">${item["补习时间"] || '待定'}</span></div>
+                    <div class="info-row"><span class="info-label">📝 要求：</span><span class="info-content">${item["对老师要求"] || '无'}</span></div>
                     <button class="btn-grab" onclick="copyAndAlert('${orderId}')">我要接单</button>
                 `;
                 list.appendChild(card);
@@ -915,7 +926,6 @@ const orders = [
             const a = document.getElementById('areaFilter').value;
 
             const filtered = orders.filter(item => {
-                // 年级模糊匹配（兼容 1 和 一）
                 let mg = (g === '全部');
                 if (!mg) {
                     const keywords = gradeMap[g] || [g];
@@ -929,14 +939,18 @@ const orders = [
         }
 
         async function copyAndAlert(id) {
-            const item = orders.find(o => (o["编号"]||o["订单编号"]||o["ID"]||Object.values(o)[0]) == id);
-            const text = `\n编号：${id}\n学生性别：${item["学生性别"]}\n年级：${item["学生年级"]}\n补习科目：${item["补习科目"]}\n补习时间：${item["补习时间"]}\n价格：${item["价格"]}\n地址：${item["地址"]}\n对老师要求：${item["对老师要求"]}`;
+            // 在清洗后的数据中查找
+            const item = orders.find(o => (o["订单号"] || o["编号"] || o["ID"] || Object.values(o)[0]) == id);
+            if (!item) return;
+
+            const price = item["价格"] || item["报价"] || '面议';
+            const text = `里昂，申请接单！\n------------\n编号：${id}\n年级：${item["学生年级"]}\n科目：${item["补习科目"]}\n时间：${item["补习时间"]}\n价格：${price}\n地址：${item["地址"]}\n要求：${item["对老师要求"]}`;
             
             try {
                 await navigator.clipboard.writeText(text);
-                alert("已复制，发给 里昂 即可接单");
+                alert("已复制订单信息，直接发给 里昂 即可接单！");
             } catch (err) {
-                alert("复制失败，请截图发送给里昂！");
+                alert("复制失败，请手动截图给里昂。");
             }
         }
 
