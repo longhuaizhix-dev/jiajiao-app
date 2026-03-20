@@ -371,7 +371,7 @@
 
         async function copyAndAlert(id) {
             const item = orders.find(o => (o["编号"]||o["订单编号"]||o["ID"]||Object.values(o)[0]) == id);
-            const text = `里昂，我想接单！\n订单信息如下：\n编号：${id}\n年级：${item["学生年级"]}\n科目：${item["补习科目"]}\n地址：${item["地址"]}\n报价：${item["报价"]}`;
+            const text = `\n\n编号：${id}\n学生性别：${item["学生性别"]}\n年级：${item["学生年级"]}\n补习科目：${item["补习科目"]}\n补习时间：${item["补习时间"]}\n价格：${item["价格"]}\n地址：${item["地址"]}\n对老师的要求：${item["对老师的要求"]}`;
             
             try {
                 await navigator.clipboard.writeText(text);
